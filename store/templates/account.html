@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Account | FurniHub
+{% endblock %}
+
+{% block content %}
+
+<section class="account-page">
+
+    <div class="account-header">
+
+        <p class="section-label">MY ACCOUNT</p>
+
+        <h1>
+            Welcome, {{ user.username }}
+        </h1>
+
+        <p>
+            Manage your account and view your orders.
+        </p>
+
+    </div>
+
+
+    <!-- ACCOUNT INFORMATION -->
+
+    <div class="account-info-card">
+
+        <div class="account-avatar">
+            👤
+        </div>
+
+        <div class="account-details">
+
+            <h2>
+                {{ user.username }}
+            </h2>
+
+            <p>
+                {{ user.email }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ORDER HISTORY -->
+
+    <div class="orders-section">
+
+        <div class="orders-heading">
+
+            <div>
+                <p class="section-label">
+                    ORDER HISTORY
+                </p>
+
+                <h2>
+                    Your Orders
+                </h2>
+            </div>
+
+            <a
+                href="{% url 'shop' %}"
+                class="account-shop-btn"
+            >
+                Shop Furniture
+            </a>
+
+        </div>
+
+
+        {% if orders %}
+
+            <div class="orders-list">
+
+                {% for order in orders %}
+
+                    <div class="order-card">
+
+                        <div class="order-card-header">
+
+                            <div>
+
+                                <span class="order-label">
+                                    Order
+                                </span>
+
+                                <h3>
+                                    #{{ order.id }}
+                                </h3>
+
+                            </div>
+
+                            <div class="order-date">
+
+                                {{ order.created_at|date:"M d, Y" }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="order-status-row">
+
+                            <div>
+
+                                <span>
+                                    Order Status
+                                </span>
+
+                                <strong class="status-{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Payment
+                                </span>
+
+                                {% if order.payment_status %}
+
+                                    <strong class="payment-paid">
+                                        Paid
+                                    </strong>
+
+                                {% else %}
+
+                                    <strong class="payment-pending">
+                                        Pending
+                                    </strong>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+                                    ₦{{ order.total_price|floatformat:0 }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="order-products">
+
+                            <h4>
+                                Items
+                            </h4>
+
+                            {% for item in order.items.all %}
+
+                                <div class="account-order-item">
+
+                                    <div class="account-product-image">
+
+                                        {% if item.product.image %}
+
+                                            <img
+                                                src="{{ item.product.image.url }}"
+                                                alt="{{ item.product.name }}"
+                                            >
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <div class="account-product-details">
+
+                                        <h5>
+                                            {{ item.product.name }}
+                                        </h5>
+
+                                        <p>
+                                            Quantity:
+                                            {{ item.quantity }}
+                                        </p>
+
+                                    </div>
+
+
+                                    <strong>
+                                        ₦{{ item.price|floatformat:0 }}
+                                    </strong>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="no-orders">
+
+                <div class="no-orders-icon">
+                    📦
+                </div>
+
+                <h2>
+                    No Orders Yet
+                </h2>
+
+                <p>
+                    You haven't placed an order yet.
+                    Start shopping to see your orders here.
+                </p>
+
+                <a
+                    href="{% url 'shop' %}"
+                    class="hero-btn"
+                >
+                    Start Shopping
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

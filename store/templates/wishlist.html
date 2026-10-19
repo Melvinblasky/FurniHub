@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}My Wishlist | FurniHub{% endblock %}
+
+{% block content %}
+
+<section class="wishlist-page">
+    <div class="wishlist-header">
+        <p class="wishlist-label">YOUR PERSONAL COLLECTION</p>
+        <h1>My Wishlist <span>♡</span></h1>
+        <p class="wishlist-subtitle">
+            Keep the furniture you love in one place.
+        </p>
+    </div>
+
+    {% if messages %}
+        <div class="wishlist-messages">
+            {% for message in messages %}
+                <p class="wishlist-message {{ message.tags }}">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if wishlist_items %}
+        <div class="wishlist-grid">
+            {% for item in wishlist_items %}
+                <article class="wishlist-card">
+
+                    <a href="{% url 'product_detail' item.product.id %}"
+                       class="wishlist-image-link">
+
+                        {% if item.product.image %}
+                            <img
+                                src="{{ item.product.image.url }}"
+                                alt="{{ item.product.name }}"
+                                class="wishlist-image"
+                            >
+                        {% else %}
+                            <div class="wishlist-no-image">
+                                No image available
+                            </div>
+                        {% endif %}
+
+                    </a>
+
+                    <div class="wishlist-card-body">
+
+                        <p class="wishlist-category">
+                            {{ item.product.category.name }}
+                        </p>
+
+                        <h2>
+                            <a href="{% url 'product_detail' item.product.id %}">
+                                {{ item.product.name }}
+                            </a>
+                        </h2>
+
+                        <p class="wishlist-price">
+                            ₦{{ item.product.price|floatformat:0 }}
+                        </p>
+
+                        {% if item.product.available and item.product.quantity > 0 %}
+                            <p class="wishlist-stock in-stock">
+                                In stock
+                            </p>
+                        {% else %}
+                            <p class="wishlist-stock out-of-stock">
+                                Currently unavailable
+                            </p>
+                        {% endif %}
+
+                        <div class="wishlist-actions">
+
+                            <a
+                                href="{% url 'product_detail' item.product.id %}"
+                                class="wishlist-view-btn"
+                            >
+                                View Product
+                            </a>
+
+                            <form
+                                method="POST"
+                                action="{% url 'remove_from_wishlist' item.product.id %}"
+                                class="wishlist-remove-form"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="wishlist-remove-btn"
+                                    aria-label="Remove {{ item.product.name }} from wishlist"
+                                >
+                                    Remove ♥
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="wishlist-empty">
+            <div class="wishlist-empty-icon">♡</div>
+            <h2>Your wishlist is empty</h2>
+            <p>
+                You haven't saved any furniture yet.
+                Explore our collection and save your favorites here.
+            </p>
+
+            <a href="{% url 'shop' %}" class="wishlist-shop-btn">
+                Explore Furniture
+            </a>
+        </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}

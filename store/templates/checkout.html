@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}
+Checkout | FurniHub
+{% endblock %}
+
+{% block content %}
+
+<section class="checkout-page">
+
+    <div class="checkout-header">
+
+        <p class="section-label">CHECKOUT</p>
+
+        <h1>Complete Your Order</h1>
+
+        <p>
+            Enter your delivery information to place your order.
+        </p>
+
+    </div>
+
+    {% if error %}
+        <div class="checkout-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <div class="checkout-container">
+
+        <div class="checkout-form-container">
+
+            <h2>Delivery Information</h2>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="checkout-form-grid">
+
+                    <div class="form-group">
+
+                        <label for="full_name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            placeholder="Enter your full name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="Enter your phone number"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="city">
+                            City
+                        </label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            placeholder="Enter your city"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="address">
+                        Delivery Address
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="4"
+                        placeholder="Enter your full delivery address"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="state">
+                        State
+                    </label>
+
+                    <input
+                        type="text"
+                        id="state"
+                        name="state"
+                        placeholder="Enter your state"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="place-order-btn"
+                >
+                    Place Order
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <aside class="checkout-summary">
+
+            <h2>Your Order</h2>
+
+            {% for item in cart_items %}
+
+                <div class="checkout-item">
+
+                    <div class="checkout-item-image">
+
+                        {% if item.product.image %}
+
+                            <img
+                                src="{{ item.product.image.url }}"
+                                alt="{{ item.product.name }}"
+                            >
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="checkout-item-details">
+
+                        <h3>
+                            {{ item.product.name }}
+                        </h3>
+
+                        <p>
+                            Quantity: {{ item.quantity }}
+                        </p>
+
+                        <strong>
+                            ₦{{ item.total|floatformat:0 }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="checkout-summary-divider"></div>
+
+
+            <div class="checkout-total">
+
+                <span>Total</span>
+
+                <strong>
+                    ₦{{ total|floatformat:0 }}
+                </strong>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+{% endblock %}

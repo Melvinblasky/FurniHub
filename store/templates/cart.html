@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart | FurniHub{% endblock %}
+
+{% block content %}
+
+<section class="cart-page">
+
+    <div class="cart-header">
+        <p class="section-label">YOUR CART</p>
+        <h1>Shopping Cart</h1>
+        <p>Review your selected furniture before proceeding to checkout.</p>
+    </div>
+
+    {% if cart_items %}
+
+    <div class="cart-container">
+
+        <div class="cart-items">
+
+            {% for item in cart_items %}
+
+            <article class="cart-item">
+
+                <div class="cart-image">
+                    {% if item.product.image %}
+                        <img
+                            src="{{ item.product.image.url }}"
+                            alt="{{ item.product.name }}"
+                        >
+                    {% else %}
+                        <div class="cart-no-image">
+                            No image available
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="cart-details">
+
+                    <p class="cart-category">
+                        {{ item.product.category.name }}
+                    </p>
+
+                    <h2>{{ item.product.name }}</h2>
+
+                    <p class="cart-price">
+                        ₦{{ item.product.price|floatformat:0 }}
+                    </p>
+
+                    <p class="cart-stock">
+                        {% if item.product.quantity > 0 and item.product.available %}
+                            In stock: {{ item.product.quantity }}
+                        {% else %}
+                            Currently unavailable
+                        {% endif %}
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{% url 'update_cart' item.product.id %}"
+                        class="cart-update-form"
+                    >
+                        {% csrf_token %}
+
+                        <label for="quantity-{{ item.product.id }}">
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            id="quantity-{{ item.product.id }}"
+                            name="quantity"
+                            value="{{ item.quantity }}"
+                            min="1"
+                            max="{{ item.product.quantity }}"
+                            required
+                        >
+
+                        <button type="submit">
+                            Update
+                        </button>
+                    </form>
+
+                    <a
+                        href="{% url 'remove_from_cart' item.product.id %}"
+                        class="remove-cart-item"
+                    >
+                        Remove item
+                    </a>
+
+                </div>
+
+                <div class="cart-item-total">
+                    <span>Item total</span>
+                    <strong>
+                        ₦{{ item.total|floatformat:0 }}
+                    </strong>
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+        <aside class="cart-summary">
+
+            <h2>Order Summary</h2>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <strong>₦{{ total|floatformat:0 }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Delivery</span>
+                <span>Calculated at checkout</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-row summary-total">
+                <span>Subtotal</span>
+                <strong>₦{{ total|floatformat:0 }}</strong>
+            </div>
+
+            <p class="cart-summary-note">
+                Your order total may change if delivery charges apply.
+            </p>
+
+            <a href="{% url 'checkout' %}" class="checkout-btn">
+                Proceed to Checkout
+            </a>
+
+            <a href="{% url 'shop' %}" class="continue-shopping">
+                Continue Shopping
+            </a>
+
+            <div class="cart-secure-note">
+                <span>✓</span>
+                <p>Review your order details before confirming your purchase.</p>
+            </div>
+
+        </aside>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-cart">
+
+        <div class="empty-cart-icon">🛒</div>
+
+        <h2>Your Cart Is Empty</h2>
+
+        <p>
+            You haven't added any furniture to your cart yet.
+            Explore our collection and find something you love.
+        </p>
+
+        <a href="{% url 'shop' %}" class="hero-btn">
+            Explore Furniture
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,216 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}FurniHub{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================
+         NAVBAR
+    ====================================== -->
+
+    <header class="navbar">
+
+        <div class="navbar-container">
+
+            <!-- LOGO -->
+
+            <a
+                href="{% url 'home' %}"
+                class="logo"
+            >
+                FurniHub 🪑
+            </a>
+
+
+            <!-- =================================
+                 NAVIGATION
+            ================================== -->
+
+            <nav
+                class="main-nav"
+                id="mainNav"
+            >
+
+                <a href="{% url 'home' %}">
+                    Home
+                </a>
+
+                <a href="{% url 'shop' %}">
+                    Shop
+                </a>
+
+                <a href="{% url 'shop' %}">
+                    Categories
+                </a>
+
+                <a href="{% url 'about' %}">
+                    About
+                </a>
+
+                <a href="{% url 'contact' %}">
+                    Contact
+                </a>
+
+                <a href="{% url 'wishlist' %}" class="nav-link">
+                   ♡ Wishlist
+                </a>
+
+
+                <!-- CART -->
+
+                <a
+                    href="{% url 'cart' %}"
+                    class="nav-cart"
+                    aria-label="Shopping Cart"
+                >
+                    <span class="nav-icon">
+                        🛒
+                    </span>
+
+                    <span>
+                        Cart
+                    </span>
+                </a>
+
+
+                <!-- =================================
+                     ACCOUNT
+                ================================== -->
+
+                <div class="account-menu">
+
+                    <button
+                        class="account-icon"
+                        type="button"
+                        aria-label="Open account menu"
+                    >
+                        <span class="nav-icon">
+                            👤
+                        </span>
+                    </button>
+
+
+                    <!-- ACCOUNT DROPDOWN -->
+
+                    <div class="account-dropdown">
+
+                        {% if user.is_authenticated %}
+
+                            <div class="account-name">
+                                Hi, {{ user.username }}
+                            </div>
+
+
+                            <a href="{% url 'account' %}">
+                                My Account
+                            </a>
+
+
+                            <form
+                                method="POST"
+                                action="{% url 'logout' %}"
+                                class="logout-form"
+                            >
+
+                                {% csrf_token %}
+
+                                <button type="submit">
+                                    Logout
+                                </button>
+
+                            </form>
+
+
+                        {% else %}
+
+                            <a href="{% url 'login' %}">
+                                Login
+                            </a>
+
+                            <a href="{% url 'register' %}">
+                                Register
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </nav>
+
+
+            <!-- =================================
+                 MOBILE MENU BUTTON
+            ================================== -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================
+         MAIN CONTENT
+    ====================================== -->
+
+    <main>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
+    <footer>
+
+        <p>
+            &copy; 2026 FurniHub.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+
+</html>

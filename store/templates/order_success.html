@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order Confirmed | FurniHub
+{% endblock %}
+
+{% block content %}
+
+<section class="success-page">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1>
+            Order Confirmed!
+        </h1>
+
+        <p class="success-message">
+            Thank you for shopping with FurniHub.
+            Your order has been received successfully.
+        </p>
+
+        <div class="order-number">
+
+            <span>Order Number</span>
+
+            <strong>
+                #{{ order.id }}
+            </strong>
+
+        </div>
+
+
+        <div class="customer-details">
+
+            <h2>Order Information</h2>
+
+            <div class="info-row">
+
+                <span>Customer</span>
+
+                <strong>
+                    {{ order.full_name }}
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Email</span>
+
+                <strong>
+                    {{ order.email }}
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Phone</span>
+
+                <strong>
+                    {{ order.phone }}
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Delivery Address</span>
+
+                <strong>
+                    {{ order.address }},
+                    {{ order.city }},
+                    {{ order.state }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="success-order">
+
+            <h2>Order Summary</h2>
+
+            {% for item in order.items.all %}
+
+                <div class="success-item">
+
+                    <div class="success-item-info">
+
+                        <h3>
+                            {{ item.product.name }}
+                        </h3>
+
+                        <p>
+                            Quantity:
+                            {{ item.quantity }}
+                        </p>
+
+                    </div>
+
+                    <strong>
+                        ₦{{ item.price|floatformat:0 }}
+                    </strong>
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="success-divider"></div>
+
+
+            <div class="success-total">
+
+                <span>Total</span>
+
+                <strong>
+                    ₦{{ order.total_price|floatformat:0 }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="success-actions">
+
+            <a
+                href="{% url 'shop' %}"
+                class="hero-btn"
+            >
+                Continue Shopping
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a
+                    href="{% url 'account' %}"
+                    class="success-account-btn"
+                >
+                    View My Orders
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

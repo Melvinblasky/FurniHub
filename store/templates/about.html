@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}
+About Us | FurniHub
+{% endblock %}
+
+{% block content %}
+
+<section class="about-page">
+
+    <!-- HEADER -->
+
+    <div class="about-header">
+
+        <p class="section-label">
+            ABOUT FURNIHUB
+        </p>
+
+        <h1>
+            Furniture Made for Better Spaces
+        </h1>
+
+        <p>
+            We believe the right furniture can make a space
+            more comfortable, functional and beautiful.
+        </p>
+
+    </div>
+
+
+    <!-- STORY -->
+
+    <div class="about-content">
+
+        <div class="about-text">
+
+            <h2>
+                Our Story
+            </h2>
+
+            <p>
+                FurniHub is a furniture store focused on providing
+                quality furniture for homes, offices and modern
+                workspaces.
+            </p>
+
+            <p>
+                From comfortable office chairs and practical desks
+                to stylish furniture for your home, our goal is to
+                make it easier for you to find furniture that fits
+                your space and your lifestyle.
+            </p>
+
+            <p>
+                We are committed to providing a simple shopping
+                experience, reliable products and customer service
+                you can trust.
+            </p>
+
+        </div>
+
+
+        <div class="about-highlight">
+
+            <div class="about-highlight-icon">
+                🪑
+            </div>
+
+            <h3>
+                Quality Furniture
+            </h3>
+
+            <p>
+                Furniture selected with comfort,
+                style and functionality in mind.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- VALUES -->
+
+    <div class="values-section">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                WHAT WE VALUE
+            </p>
+
+            <h2>
+                Why Choose FurniHub?
+            </h2>
+
+        </div>
+
+
+        <div class="values-grid">
+
+            <div class="value-card">
+
+                <div class="value-icon">
+                    ✓
+                </div>
+
+                <h3>
+                    Quality
+                </h3>
+
+                <p>
+                    We focus on furniture that offers
+                    lasting value and everyday comfort.
+                </p>
+
+            </div>
+
+
+            <div class="value-card">
+
+                <div class="value-icon">
+                    ★
+                </div>
+
+                <h3>
+                    Style
+                </h3>
+
+                <p>
+                    Find furniture that complements
+                    your home or workspace.
+                </p>
+
+            </div>
+
+
+            <div class="value-card">
+
+                <div class="value-icon">
+                    ♥
+                </div>
+
+                <h3>
+                    Customers
+                </h3>
+
+                <p>
+                    We aim to make every shopping
+                    experience simple and enjoyable.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CTA -->
+
+    <section class="about-cta">
+
+        <h2>
+            Find Something Perfect for Your Space
+        </h2>
+
+        <p>
+            Explore our furniture collection today.
+        </p>
+
+        <a
+            href="{% url 'shop' %}"
+            class="hero-btn"
+        >
+            Shop Furniture
+        </a>
+
+    </section>
+
+</section>
+
+{% endblock %}

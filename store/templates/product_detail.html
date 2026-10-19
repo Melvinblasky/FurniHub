@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{ product.name }} | FurniHub{% endblock %}
+
+{% block content %}
+
+<div class="product-detail-page">
+
+    <!-- PRODUCT DETAILS -->
+    <section class="product-detail-container">
+
+        <!-- PRODUCT IMAGE -->
+        <div class="product-detail-image">
+            {% if product.image %}
+                <img
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+            {% else %}
+                <div class="product-image-placeholder">
+                    No image available
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- PRODUCT INFORMATION -->
+        <div class="product-detail-info">
+
+            <p class="product-detail-category">
+                {{ product.category.name }}
+            </p>
+
+            <h1>{{ product.name }}</h1>
+
+            <p class="product-detail-price">
+                ₦{{ product.price|floatformat:0 }}
+            </p>
+
+            <!-- AVERAGE RATING -->
+            <div class="product-detail-rating">
+                {% if review_count %}
+                    <span class="detail-rating-stars">
+                        {% for star in "12345" %}
+                            {% if forloop.counter <= average_rating|default:0 %}
+                                <span class="star-filled">★</span>
+                            {% else %}
+                                <span class="star-empty">☆</span>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+
+                    <span>
+                        {{ average_rating|floatformat:1 }}
+                        ({{ review_count }}
+                        review{{ review_count|pluralize }})
+                    </span>
+                {% else %}
+                    <span class="detail-no-rating">
+                        No reviews yet
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- STOCK STATUS -->
+            <div class="product-detail-stock">
+                {% if product.available and product.quantity > 0 %}
+                    <span class="detail-in-stock">
+                        ● In Stock
+                    </span>
+                    <p>{{ product.quantity }} available</p>
+                {% else %}
+                    <span class="detail-out-of-stock">
+                        ● Out of Stock
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- PRODUCT DESCRIPTION -->
+            <div class="product-detail-description">
+                <h3>Product Description</h3>
+
+                {% if product.description %}
+                    <p>{{ product.description|linebreaksbr }}</p>
+                {% else %}
+                    <p>No description is available for this product.</p>
+                {% endif %}
+            </div>
+
+            <!-- ADD TO CART -->
+            {% if product.available and product.quantity > 0 %}
+
+                <form
+                    method="POST"
+                    action="{% url 'add_to_cart' product.id %}"
+                    class="product-detail-cart-form"
+                >
+                    {% csrf_token %}
+
+                    <label for="product-quantity">
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="product-quantity"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        max="{{ product.quantity }}"
+                        required
+                    >
+
+                    <button type="submit" class="product-add-cart-btn">
+                        Add to Cart
+                    </button>
+                </form>
+
+            {% else %}
+
+                <button type="button" class="product-add-cart-btn" disabled>
+                    Currently Unavailable
+                </button>
+
+            {% endif %}
+
+            <!-- WISHLIST BUTTON -->
+            <div class="product-wishlist-action">
+
+                {% if user.is_authenticated %}
+
+                    {% if is_in_wishlist %}
+
+                        <form
+                            method="POST"
+                            action="{% url 'remove_from_wishlist' product.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="next"
+                                value="{{ request.path }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="product-wishlist-btn saved"
+                            >
+                                ♥ Saved to Wishlist
+                            </button>
+                        </form>
+
+                    {% else %}
+
+                        <form
+                            method="POST"
+                            action="{% url 'add_to_wishlist' product.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="next"
+                                value="{{ request.path }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="product-wishlist-btn"
+                            >
+                                ♡ Add to Wishlist
+                            </button>
+                        </form>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <a
+                        class="product-wishlist-btn"
+                        href="{% url 'login' %}?next={{ request.path|urlencode }}"
+                    >
+                        ♡ Log in to Save Favorites
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+            <!-- PRODUCT FEATURES -->
+            <div class="product-detail-features">
+                <div class="product-feature">
+                    <span>✓</span>
+                    <p>Quality furniture for your space</p>
+                </div>
+
+                <div class="product-feature">
+                    <span>✓</span>
+                    <p>Easy and convenient ordering</p>
+                </div>
+
+                <div class="product-feature">
+                    <span>✓</span>
+                    <p>Browse more products in our shop</p>
+                </div>
+            </div>
+
+            <a href="{% url 'shop' %}" class="back-to-shop">
+                ← Continue Shopping
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- CUSTOMER REVIEWS -->
+    <section class="product-reviews">
+
+        <div class="reviews-header">
+
+            <p class="section-label">CUSTOMER FEEDBACK</p>
+
+            <h2>Customer Reviews</h2>
+
+            {% if review_count %}
+                <div class="rating-overview">
+
+                    <span class="average-rating">
+                        {{ average_rating|floatformat:1 }}
+                    </span>
+
+                    <span class="review-stars" aria-label="Average rating">
+                        {% for star in "12345" %}
+                            {% if forloop.counter <= average_rating|default:0 %}
+                                <span class="star-filled">★</span>
+                            {% else %}
+                                <span class="star-empty">☆</span>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+
+                    <p>
+                        Based on {{ review_count }}
+                        review{{ review_count|pluralize }}
+                    </p>
+
+                </div>
+            {% else %}
+                <p>
+                    Be the first to share your experience with this product.
+                </p>
+            {% endif %}
+
+        </div>
+
+
+        <!-- REVIEW MESSAGES -->
+        {% if messages %}
+            <div class="review-messages">
+
+                {% for message in messages %}
+                    <p class="review-message {{ message.tags }}">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+
+
+        <!-- REVIEW LIST -->
+        {% if reviews %}
+
+            <div class="review-list">
+
+                {% for review in reviews %}
+
+                    <article class="review-card">
+
+                        <div class="review-card-header">
+
+                            <div>
+                                <h3>{{ review.customer.username }}</h3>
+
+                                <p class="review-date">
+                                    {{ review.created_at|date:"F j, Y" }}
+                                </p>
+                            </div>
+
+                            <div
+                                class="review-stars"
+                                aria-label="{{ review.rating }} out of 5 stars"
+                            >
+                                {% for star in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <span class="star-filled">★</span>
+                                    {% else %}
+                                        <span class="star-empty">☆</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+                        <p class="review-comment">
+                            {{ review.comment|linebreaksbr }}
+                        </p>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="no-reviews">
+                <h3>No reviews yet</h3>
+                <p>Customer feedback will appear here.</p>
+            </div>
+
+        {% endif %}
+
+
+        <!-- WRITE A REVIEW -->
+        <div class="review-form-container">
+
+            <h3>Write a Review</h3>
+
+            {% if user.is_authenticated %}
+
+                {% if user_review %}
+
+                    <p>
+                        You have already reviewed this product.
+                        Thank you for sharing your feedback!
+                    </p>
+
+                {% else %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'add_review' product.id %}"
+                        class="review-form"
+                    >
+                        {% csrf_token %}
+
+                        <label for="rating">
+                            Your Rating
+                        </label>
+
+                        <select id="rating" name="rating" required>
+                            <option value="">Choose a rating</option>
+                            <option value="5">★★★★★ - Excellent</option>
+                            <option value="4">★★★★☆ - Very Good</option>
+                            <option value="3">★★★☆☆ - Good</option>
+                            <option value="2">★★☆☆☆ - Fair</option>
+                            <option value="1">★☆☆☆☆ - Poor</option>
+                        </select>
+
+                        <label for="comment">
+                            Your Review
+                        </label>
+
+                        <textarea
+                            id="comment"
+                            name="comment"
+                            rows="5"
+                            maxlength="2000"
+                            placeholder="Share your experience with this product..."
+                            required
+                        ></textarea>
+
+                        <button
+                            type="submit"
+                            class="submit-review-btn"
+                        >
+                            Submit Review
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            {% else %}
+
+                <p>
+                    Please
+                    <a href="{% url 'login' %}?next={{ request.path|urlencode }}">
+                        log in
+                    </a>
+                    to submit a review.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
